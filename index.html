@@ -259,8 +259,7 @@ geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     const hit = raycaster.intersectObjects(imageMeshes);
     if(hit.length > 0){
     spawnLove(hit[0].object.position);
-  }
-       else {
+    }
         spawnLove(hit[0].object.position);
       }
     }
