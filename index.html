@@ -204,21 +204,6 @@ scene.add(heart);
   const galaxy = new THREE.Points(geo, mat);
   scene.add(galaxy);
 
-  /* 🔐 LOCK */
-  const c2 = document.createElement('canvas');
-  c2.width = 128; c2.height = 128;
-  const ctx2 = c2.getContext('2d');
-  ctx2.font = "100px serif";
-  ctx2.textAlign = "center";
-  ctx2.textBaseline = "middle";
-  ctx2.fillText("🔐", 64, 64);
-
-  const lockMesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 2),
-    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c2), transparent: true, depthTest: false })
-  );
-  lockMesh.position.set(0, 0, 0);
-  
 
   /* ❤️ GAMBAR */
   const loader = new THREE.TextureLoader();
