@@ -251,20 +251,19 @@ geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
 
-  window.addEventListener('click', function(event){
-    if(document.querySelector('.webgl').style.display !== 'block') return;
-    mouse.x = (event.clientX / innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / innerHeight) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
-    const hit = raycaster.intersectObjects(imageMeshes);
-    if(hit.length > 0){
-    spawnLove(hit[0].object.position);
-    }
-        spawnLove(hit[0].object.position);
-      }
-    }
-  });
+ window.addEventListener('click', function(event){
+  if(document.querySelector('.webgl').style.display !== 'block') return;
 
+  mouse.x = (event.clientX / innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const hit = raycaster.intersectObjects(imageMeshes);
+
+  if(hit.length > 0){
+    spawnLove(hit[0].object.position);
+  }
+});
   /* 💌 LOVE */
   function spawnLove(pos){
     for(let i = 0; i < 5; i++){
