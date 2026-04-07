@@ -8,6 +8,22 @@
 body {
   margin: 0;
   background: radial-gradient(circle at center, #1a001a, #000000);
+}
+  
+#bigText {
+  position: fixed;
+  top: 40%;
+  width: 100%;
+  font-size: 48px;
+  color: white;
+  opacity: 0;
+  transition: 2s;
+  text-shadow: 0 0 20px #fff, 0 0 40px #ff69b4;
+  z-index: 5;
+  pointer-events: none;
+}
+  </style>
+  
   overflow: hidden;
   color: white;
   font-family: 'Poppins', sans-serif;
@@ -118,6 +134,7 @@ button {
 <body>
 
 <canvas class="webgl"></canvas>
+  <div id="bigText">Happy Birthday Sayang,May Allah Bless you💖</div>
 
 <div id="login">
   <h2>Only For Birthday Girl 💌</h2>
@@ -144,6 +161,11 @@ button {
 var galaxyStarted = false;
 
 function startGalaxy() {
+
+  let textShown = false; // 👈 LETAK SINI
+
+  if(galaxyStarted) return;
+  galaxyStarted = true;
   if(galaxyStarted) return;
   galaxyStarted = true;
 
@@ -200,9 +222,9 @@ const heart = new THREE.Points(heartGeo, heartMat);
   const radius = Math.random() * 15;
   const angle = Math.random() * Math.PI * 2;
 
-  positions[i3] = Math.cos(angle) * radius;
-  positions[i3+1] = (Math.random() - 0.5) * 2;
-  positions[i3+2] = Math.sin(angle) * radius;
+  positions[i3]   = (Math.random() - 0.5) * 40;
+  positions[i3+1] = (Math.random() - 0.5) * 40;
+  positions[i3+2] = (Math.random() - 0.5) * 40;
 
   const color = new THREE.Color();
   color.setHSL(0.85 + Math.random()*0.1, 0.8, 0.6);
@@ -233,6 +255,25 @@ geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const loader = new THREE.TextureLoader();
   const imageMeshes = [];
   const imgs = ['pic1.jpg','pic2.jpg','pic3.jpg','pic4.jpg'];
+  const TOTAL_IMAGES = 80; // 🔥 banyakkan sini
+
+  for(let i = 0; i < TOTAL_IMAGES; i++){
+   const tex = loader.load(imgs[i % imgs.length]); // repeat gambar
+
+  const mesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(Math.random() * 0.8 + 0.5, Math.random() * 0.8 + 0.5),
+  new THREE.MeshBasicMaterial({
+    map: tex,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending // ✨ GLOW EFFECT
+  })
+);
+    mesh.material.color.set('#ff69b4');
+
+    scene.add(mesh);
+    imageMeshes.push(mesh);
+}
 
   imgs.forEach(function(img){
     const tex = loader.load(img);
@@ -308,11 +349,17 @@ geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   /* 🖼️ GAMBAR SENTIASA HADAP CAMERA (NO 4) */
   imageMeshes.forEach(m => {
     m.lookAt(camera.position);
+    m.rotation.z += 0.002;
   });
 
   /* 🎥 ZOOM IN OUT */
   let time = Date.now() * 0.001;
   camera.position.z = 18 + Math.sin(time * 0.4) * 3;
+
+  if(camera.position.z > 22 && !textShown){
+   document.getElementById('bigText').style.opacity = 1;
+   textShown = true;
+}
 
   renderer.render(scene, camera);
 }
