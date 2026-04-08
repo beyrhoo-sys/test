@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For my beautiful girl ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  background: radial-gradient(circle at center, #1a001a, #000000);
+  overflow: hidden;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
+#login {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  z-index: 10;
+}
+
+h2 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 48px;
+  color: #ff4d6d;
+  text-shadow: 0 0 15px rgba(255, 77, 109, 0.6);
+}
+
+input {
+  padding: 12px 15px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ff4d6d;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(255,105,180,0.3);
+  text-shadow: 0 0 8px rgba(255, 77, 109, 0.8);
+  transition: 0.3s;
+}
+
+input:focus {
+  box-shadow: 0 0 15px #ff4d6d, 0 0 30px #ff69b4;
+}
+
+input::placeholder {
+  color: #ff85a2;
+  opacity: 0.7;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: pink;
+}
+
+#matrix-phase {
+  position: absolute;
+  inset: 0;
+  display: none;
+  z-index: 50;
+}
+
+#countdown-num {
+  position: absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-size:120px;
+  color:#ff69b4;
+  z-index:60;
+  opacity:0;
+  text-shadow:0 0 20px #ff1493,0 0 50px #ff69b4;
+}
+
+.heart {
+  position:absolute;
+  animation:fall 5s linear forwards;
+}
+
+@keyframes fall {
+  to { transform:translateY(110vh); opacity:0; }
+}
+
+.wish {
+  position:absolute;
+  font-family:'Great Vibes';
+  color:#ff85c1;
+  text-shadow:0 0 10px #ff1493,0 0 30px #ff69b4;
+}
+
+#nextBtn {
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  font-family:'Great Vibes';
+  font-size:32px;
+  color:#ff69b4;
+  text-shadow:0 0 10px #ff1493,0 0 30px #ff69b4;
+  opacity:0;
+}
+
+#nextBtn.show { opacity:1; }
+
+.webgl {
+  position:fixed;
+  inset:0;
+  display:none;
+  z-index:1;
+}
+</style>
+</head>
+
+<body>
+
+<canvas class="webgl"></canvas>
+
+<div id="login">
+  <h2>Only For Birthday Girl 💌</h2>
+  <input type="password" id="pass">
+  <br><br>
+  <button onclick="check()">Open 💖</button>
+</div>
+
+<div id="matrix-phase">
+  <canvas id="matrixCanvas"></canvas>
+</div>
+
+<div id="countdown-num"></div>
+<div id="nextBtn" onclick="goNext()">next</div>
+
+<audio id="music" loop>
+  <source src="song.mp3">
+</audio>
+
+<!-- THREE.js dari cdnjs — reliable, tak ada module issue -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+var galaxyStarted = false;
+
+function startGalaxy() {
+  if(galaxyStarted) return;
+  galaxyStarted = true;
+
+  document.querySelector('.webgl').style.display = 'block';
+  document.querySelector('.webgl').style.opacity = '1';
+
+  const canvas = document.querySelector('.webgl');
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0, 8, 22);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setClearColor('#000000');
+
+  const count = 80000;
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+
+  for(let i = 0; i < count; i++){
+    const i3 = i * 3;
+    const branch = i % 3;
+    const t = i / count;
+    const radius = Math.pow(t, 0.5) * 14;
+    const spinAngle = radius * 1.8;
+    const branchAngle = (branch / 3) * Math.PI * 2;
+    const angle = branchAngle + spinAngle;
+    const scatter = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1);
+    const scatterY = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1);
+
+    positions[i3]   = Math.cos(angle) * radius + scatter * Math.max(0, 1.5 - radius * 0.05);
+    positions[i3+1] = scatterY * 0.6;
+    positions[i3+2] = Math.sin(angle) * radius + scatter * Math.max(0, 1.5 - radius * 0.05);
+  }
+
+  for(let i = 0; i < count; i++){
+    const i3 = i * 3;
+    const x = positions[i3], z = positions[i3+2];
+    const radius = Math.sqrt(x*x + z*z);
+    const color = new THREE.Color();
+
+    if(Math.random() < 0.05){
+      color.set('#ffffff');
+    } else if(radius < 2){
+      color.setHSL(0.08, 1.0, 0.75);
+    } else if(radius < 5){
+      color.setHSL(0.85 + Math.random() * 0.05, 0.9, 0.65);
+    } else {
+      color.setHSL(0.83 + Math.random() * 0.08, 0.8, 0.55 + Math.random() * 0.2);
+    }
+
+    colors[i3] = color.r; colors[i3+1] = color.g; colors[i3+2] = color.b;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const mat = new THREE.PointsMaterial({
+    size: 0.045,
+    vertexColors: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    transparent: true,
+    opacity: 0.95
+  });
+
+  const galaxy = new THREE.Points(geo, mat);
+  scene.add(galaxy);
+
+  /* 🔐 LOCK */
+  const c2 = document.createElement('canvas');
+  c2.width = 128; c2.height = 128;
+  const ctx2 = c2.getContext('2d');
+  ctx2.font = "100px serif";
+  ctx2.textAlign = "center";
+  ctx2.textBaseline = "middle";
+  ctx2.fillText("🔐", 64, 64);
+
+  const lockMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2),
+    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c2), transparent: true, depthTest: false })
+  );
+  lockMesh.position.set(0, 0, 0);
+  scene.add(lockMesh);
+
+  /* ❤️ GAMBAR */
+  const loader = new THREE.TextureLoader();
+  const imageMeshes = [];
+  const imgs = ['pic1.jpg','pic2.jpg','pic3.jpg','pic4.jpg'];
+
+  imgs.forEach(function(img){
+    const tex = loader.load(img);
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(Math.random() * 0.8 + 0.5, Math.random() * 0.8 + 0.5),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.85 })
+    );
+    const index = Math.floor(Math.random() * (count - 1));
+    mesh.position.set(positions[index*3], positions[index*3+1], positions[index*3+2]);
+    mesh.lookAt(camera.position);
+    scene.add(mesh);
+    imageMeshes.push(mesh);
+  });
+
+  /* 🎯 CLICK */
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  window.addEventListener('click', function(event){
+    if(document.querySelector('.webgl').style.display !== 'block') return;
+    mouse.x = (event.clientX / innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const hit = raycaster.intersectObjects(imageMeshes.concat([lockMesh]));
+    if(hit.length > 0){
+      if(hit[0].object === lockMesh){
+        goNextPart2();
+      } else {
+        spawnLove(hit[0].object.position);
+      }
+    }
+  });
+
+  /* 💌 LOVE */
+  function spawnLove(pos){
+    for(let i = 0; i < 5; i++){
+      const div = document.createElement('div');
+      div.innerHTML = "I love you ❤️";
+      div.style.cssText = 'position:absolute;color:#ff69b4;font-family:Great Vibes;font-size:24px;text-shadow:0 0 10px #ff1493;pointer-events:none;';
+      document.body.appendChild(div);
+      const v = pos.clone().project(camera);
+      let x = (v.x * 0.5 + 0.5) * innerWidth + (Math.random()-0.5)*100;
+      let y = (-v.y * 0.5 + 0.5) * innerHeight + (Math.random()-0.5)*100;
+      div.style.left = x + 'px';
+      div.style.top = y + 'px';
+      div.style.opacity = 1;
+      let up = 0;
+      const anim = setInterval(function(){
+        up++;
+        div.style.top = (y - up) + 'px';
+        div.style.opacity -= 0.02;
+        if(div.style.opacity <= 0){ clearInterval(anim); div.remove(); }
+      }, 16);
+    }
+  }
+
+  /* 🔓 UNLOCK */
+  function goNextPart2(){
+    document.querySelector('.webgl').style.opacity = 0;
+    setTimeout(function(){
+      alert("Unlocked ❤️");
+      // window.location.href = "next.html";
+    }, 800);
+  }
+
+  /* 🎬 ANIMATE */
+  function animate(){
+    requestAnimationFrame(animate);
+    galaxy.rotation.y += 0.0008;
+    lockMesh.position.y = Math.sin(Date.now() * 0.002) * 0.5;
+    const scale = 1 + Math.sin(Date.now() * 0.003) * 0.1;
+    lockMesh.scale.set(scale, scale, scale);
+    lockMesh.lookAt(camera.position);
+    if(camera.position.z > 12) camera.position.z -= 0.015;
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', function(){
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+}
+</script>
+
+<script>
+function check(){
+  if(pass.value==='111498'){
+    login.style.display='none';
+    startMatrix();
+  }
+}
+
+function startMatrix(){
+  const phase = document.getElementById('matrix-phase');
+  phase.style.display='block';
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+
+  const chars='アイウエオ0123456789♥';
+  const size=14;
+  const columns=canvas.width/size;
+  const drops=Array.from({length:columns},()=>Math.random()*-50);
+
+  const interval=setInterval(()=>{
+    ctx.fillStyle="rgba(0,0,0,0.05)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#ff69b4";
+    ctx.font=size+"px monospace";
+    drops.forEach((y,i)=>{
+      ctx.fillText(chars[Math.random()*chars.length|0],i*size,y*size);
+      if(y*size>canvas.height && Math.random()>0.97) drops[i]=Math.random()*-20;
+      drops[i]++;
+    });
+  },33);
+
+  setTimeout(()=>{
+    runCountdown(3,()=>{
+      clearInterval(interval);
+      phase.style.display='none';
+      startEffect();
+      fadeMusic();
+    });
+  },1500);
+}
+
+function runCountdown(n,cb){
+  const el=document.getElementById('countdown-num');
+  function show(num,done){
+    el.textContent=num;
+    el.style.opacity=1;
+    setTimeout(()=>{ el.style.opacity=0; setTimeout(done,300); },700);
+  }
+  function next(){
+    if(n<1) return cb();
+    show(n--,()=>setTimeout(next,200));
+  }
+  next();
+}
+
+function fadeMusic(){
+  music.volume=0;
+  music.play();
+  let v=0;
+  const i=setInterval(()=>{
+    if(v<1){v+=0.05;music.volume=v;}
+    else clearInterval(i);
+  },200);
+}
+
+let rainImg,rainHeart,rainWish;
+
+function startEffect(){
+  const images=['pic1.jpg','pic2.jpg','pic3.jpg','pic4.jpg'];
+
+  rainImg=setInterval(()=>{
+    const img=document.createElement('img');
+    img.src=images[Math.random()*images.length|0];
+    img.style.position='absolute';
+    img.style.top='-100px';
+    img.style.left=Math.random()*100+'%';
+    img.style.width=(Math.random()*80+50)+'px';
+    img.style.animation='fall 5s linear';
+    document.body.appendChild(img);
+    setTimeout(()=>img.remove(),5000);
+  },300);
+
+  rainHeart=setInterval(()=>{
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤️";
+    h.style.left=Math.random()*100+"%";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),5000);
+  },200);
+
+  rainWish=setInterval(()=>{
+    const t=document.createElement('div');
+    t.className='wish';
+    t.innerHTML='happy birthday sayang ♥️';
+    t.style.left=Math.random()*100+'%';
+    t.style.top=Math.random()*80+'%';
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),4000);
+  },500);
+
+  setTimeout(()=>{ nextBtn.classList.add('show'); },10000);
+}
+
+function goNext(){
+  clearInterval(rainImg);
+  clearInterval(rainHeart);
+  clearInterval(rainWish);
+  document.querySelectorAll('.heart,.wish,img').forEach(el=>el.remove());
+  nextBtn.style.display='none';
+  document.querySelector('.webgl').style.display='block';
+  document.body.style.background="black";
+  setTimeout(()=>startGalaxy(),200);
+}
+</script>
+
+</body>
+</html>
